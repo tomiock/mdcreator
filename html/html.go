@@ -3,10 +3,13 @@ package html
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 func mdToHTML(md []byte) []byte {
@@ -23,6 +26,18 @@ func mdToHTML(md []byte) []byte {
 	return markdown.Render(doc, renderer)
 }
 
+
+func TranformFileName(fileName string) string {
+	list_string := strings.Fields(fileName)
+
+	for idx := range list_string {
+		caser := cases.Title(language.English)
+		list_string[idx] = caser.String(list_string[idx])
+	}
+
+	return strings.Join(list_string, "")
+}
+
 func WriteHTMLFile(args string) {
 
     input, err := os.ReadFile(args)
@@ -31,7 +46,7 @@ func WriteHTMLFile(args string) {
 	panic(err)
     }
 
-    file_name := os.Args[1][:len(args)-3]
+    file_name := TranformFileName(os.Args[1][:len(args)-3])
 
     file, err := os.Create(file_name + ".html")
     if err != nil {
