@@ -1,4 +1,4 @@
-package mdcreator
+package html
 
 import (
 	"fmt"
@@ -23,7 +23,7 @@ func mdToHTML(md []byte) []byte {
 	return markdown.Render(doc, renderer)
 }
 
-func writeHTMLFile(args string) {
+func WriteHTMLFile(args string) {
 
     input, err := os.ReadFile(args)
     if err != nil {

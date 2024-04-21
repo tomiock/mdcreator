@@ -1,10 +1,11 @@
-package main
+package main 
+// always main package for executable program
 
 import (
     "fmt"
     "os"
 
-    "mdcreator"
+    "mdcreator/html" // to access the functions use html.<function_name>
 )
 
 
@@ -15,5 +16,5 @@ func main() {
 	os.Exit(1)
     }
 
-    mdcreator.writeHTMLFile(os.Args[1])
+    html.WriteHTMLFile(os.Args[1])
 }
