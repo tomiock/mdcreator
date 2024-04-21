@@ -24,5 +24,6 @@ jobs:
     - name: Build
       run: go build
 
-    #- name: Test
-      #run: go test -v ./...
+    - name: Test
+      working-directory: tests
+      run: go test
