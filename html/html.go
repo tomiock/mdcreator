@@ -57,7 +57,22 @@ func WriteHTMLFile(args string) {
     html := mdToHTML(input)
 
     header := []byte("{{ block " + file_name + " . }}\n<!DOCTYPE html>\n")
+
     _, err = file.Write(header)
+    if err != nil {
+	fmt.Println("Error writing to file:", err)
+	panic(err)
+    }
+
     _, err = file.Write(html)
+    if err != nil {
+	fmt.Println("Error writing to file:", err)
+	panic(err)
+    }
+
     _, err = file.Write([]byte("{{ end }}"))
+    if err != nil {
+	fmt.Println("Error writing to file:", err)
+	panic(err)
+    }
 }

@@ -10,7 +10,7 @@ import (
 
 
 func TestMdcreator(t *testing.T) {
-    test_file := "test.md"  
+    test_file := "test.md"
 
     f, err := os.Create(test_file)
     if err != nil {
