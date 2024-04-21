@@ -1,16 +1,18 @@
 package tests
 
 import (
-    "os"
-    "mdcreator"
+	"bufio"
+	"mdcreator/html"
+	"os"
 
-    "testing"
+	"testing"
 )
 
-func TestMain(t *testing.T) {
-    file := "test.md"  
 
-    f, err := os.Create(file)
+func TestMdcreator(t *testing.T) {
+    test_file := "test.md"  
+
+    f, err := os.Create(test_file)
     if err != nil {
         t.Fatal(err)
     }
@@ -21,5 +23,33 @@ func TestMain(t *testing.T) {
     if err != nil {
         t.Fatal(err)
     }
-    mdcreator.writeHTMLFile(file)
+
+    html.WriteHTMLFile(test_file)
+
+    file_read, err := os.Open("test.html")
+    if err != nil {
+        t.Fatal(err)
+    }
+
+    read_lines := []string{"{{ block test . }}",
+    "<!DOCTYPE html>",
+    "<h1 id=\"title\">Title</h1>", 
+    "",
+    "<h2 id=\"second-title\">Second Title</h2>", 
+    "",
+    "<p>Testing the main function</p>", 
+    "{{ end }}"}
+
+    scanner := bufio.NewScanner(file_read)
+    idx := 0
+    for scanner.Scan() {
+        if scanner.Text() != read_lines[idx] {
+            t.Fatalf("Expected %s, got %s", read_lines[idx], scanner.Text())
+        }
+        idx++
+    }
+
+    if err := scanner.Err(); err != nil {
+        t.Fatal(err)
+    }
 }
