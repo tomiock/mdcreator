@@ -46,7 +46,7 @@ func WriteHTMLFile(args string) {
 	panic(err)
     }
 
-    file_name := TranformFileName(os.Args[1][:len(args)-3])
+    file_name := TranformFileName(args[:len(args)-3])
 
     file, err := os.Create(file_name + ".html")
     if err != nil {

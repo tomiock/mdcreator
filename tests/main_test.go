@@ -10,9 +10,7 @@ import (
 
 
 func TestMdcreator(t *testing.T) {
-    test_file := "test.md"
-
-    f, err := os.Create(test_file)
+    f, err := os.Create("test.md")
     if err != nil {
         t.Fatal(err)
     }
@@ -24,7 +22,7 @@ func TestMdcreator(t *testing.T) {
         t.Fatal(err)
     }
 
-    html.WriteHTMLFile(test_file)
+    html.WriteHTMLFile("test.md")
 
     file_read, err := os.Open("Test.html")
     if err != nil {
