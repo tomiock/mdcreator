@@ -24,12 +24,12 @@ func TestMdcreator(t *testing.T) {
 
     html.WriteHTMLFile("test.md")
 
-    file_read, err := os.Open("Test.html")
+    file_read, err := os.Open("test.html")
     if err != nil {
         t.Fatal(err)
     }
 
-    read_lines := []string{"{{ block Test . }}",
+    read_lines := []string{"{{ block \"test\" . }}",
     "<!DOCTYPE html>",
     "<h1 id=\"title\">Title</h1>", 
     "",
@@ -53,9 +53,9 @@ func TestMdcreator(t *testing.T) {
 }
 
 func TestTranformFileName(t *testing.T) {
-    expected := "TestFilenameWithAComplexName.md"
+    expected := "test_filename_with_a_complex_name.md"
 
-    result := html.TranformFileName("Test FileName with a Complex Name.md")
+    result := html.TransformFileName("Test FileName with a Complex Name.md")
 
     if result != expected {
         t.Fatalf("Expected %s, got %s", expected, result)

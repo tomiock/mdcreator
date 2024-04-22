@@ -8,8 +8,6 @@ import (
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 func mdToHTML(md []byte) []byte {
@@ -27,15 +25,9 @@ func mdToHTML(md []byte) []byte {
 }
 
 
-func TranformFileName(fileName string) string {
-	list_string := strings.Fields(fileName)
-
-	for idx := range list_string {
-		caser := cases.Title(language.English)
-		list_string[idx] = caser.String(list_string[idx])
-	}
-
-	return strings.Join(list_string, "")
+func TransformFileName(fileName string) string {
+	list_string := strings.Fields(strings.ToLower(fileName))
+	return strings.Join(list_string, "_")
 }
 
 func WriteHTMLFile(args string) {
@@ -46,7 +38,7 @@ func WriteHTMLFile(args string) {
 	panic(err)
     }
 
-    file_name := TranformFileName(args[:len(args)-3])
+    file_name := TransformFileName(args[:len(args)-3])
 
     file, err := os.Create(file_name + ".html")
     if err != nil {
@@ -56,7 +48,7 @@ func WriteHTMLFile(args string) {
 
     html := mdToHTML(input)
 
-    header := []byte("{{ block " + file_name + " . }}\n<!DOCTYPE html>\n")
+    header := []byte("{{ block \"" + file_name + "\" . }}\n<!DOCTYPE html>\n")
 
     _, err = file.Write(header)
     if err != nil {
