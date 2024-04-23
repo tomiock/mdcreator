@@ -1,4 +1,4 @@
-package html
+package mdcreator
 
 import (
 	"fmt"
@@ -48,7 +48,7 @@ func WriteHTMLFile(args string) {
 
     html := mdToHTML(input)
 
-    header := []byte("{{ block \"" + file_name + "\" . }}\n<!DOCTYPE html>\n")
+    header := []byte("{{ define \"content\"}}\n")
 
     _, err = file.Write(header)
     if err != nil {
