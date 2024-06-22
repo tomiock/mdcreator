@@ -1,4 +1,4 @@
-package mdcreator
+package main
 
 import (
 	"fmt"

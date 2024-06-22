@@ -1,4 +1,4 @@
-module tomiock/mdcreator
+module tomiock.com/mdblog
 
 go 1.22.0
 
