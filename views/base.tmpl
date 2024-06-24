@@ -1,0 +1,50 @@
+{{ block "index" . }}
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style">
+<script src="https://unpkg.com/htmx.org/dist/htmx.min.js"></script>
+
+<head>
+    <title>{{.Title}}</title>
+</head>
+
+<body hx-ext="class-tools, preload">
+    <div class="top-nav">
+        <div class="c">
+            <div class="menu">
+                <div class="logo-wrapper">
+                    <svg _="on click toggle .show on #nav" class="hamburger" viewBox="0 0 100 80" width="25" height="25" style="margin-bottom:-5px">
+                        <rect width="100" height="20" style="fill:rgb(52, 101, 164)" rx="10"></rect>
+                        <rect y="30" width="100" height="20" style="fill:rgb(52, 101, 164)" rx="10"></rect>
+                        <rect y="60" width="100" height="20" style="fill:rgb(52, 101, 164)" rx="10"></rect>
+                    </svg> 
+                    <a href="/" class="logo light">tomi<b><span class="gradient-text-H1">ock</span></b></a>
+                </div>
+                <div id="nav" class="navigation" hx-boost="true">
+                    <div class="navigation-items" preload="mouseover">
+                        <div><a href="/projects">projects</a></div>
+                        <div><a href="/blog">blog</a></div>
+                        <div><a href="/cv">CV</a></div>
+                        <div><a href="/contact">contact</a></div>
+                        <div hx-disable>
+                            <form action="https://google.com/search">
+                                <input type="hidden" name="q" value="site:tomiock.com">
+                                <label>
+                                    <span style="display:none;">Search</span>
+                                    <input type="text" name="q" placeholder="🔍️" class="search-box">
+                                </label>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ template "content" . }}
+</body>
+
+</html>
+{{ end }}
+

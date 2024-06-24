@@ -2,7 +2,7 @@ package mdcreator
 
 import (
 	"bufio"
-	"tomiock/mdcreator"
+	"tomiock/mdblog"
 	"os"
 
 	"testing"
@@ -22,7 +22,7 @@ func TestMdcreator(t *testing.T) {
         t.Fatal(err)
     }
 
-    mdcreator.WriteHTMLFile("test.md")
+    mdblog.WriteHTMLFile("test.md")
 
     file_read, err := os.Open("test.html")
     if err != nil {
@@ -54,7 +54,7 @@ func TestMdcreator(t *testing.T) {
 func TestTranformFileName(t *testing.T) {
     expected := "test_filename_with_a_complex_name.md"
 
-    result := mdcreator.TransformFileName("Test FileName with a Complex Name.md")
+    result := mdblog.TransformFileName("Test FileName with a Complex Name.md")
 
     if result != expected {
         t.Fatalf("Expected %s, got %s", expected, result)
