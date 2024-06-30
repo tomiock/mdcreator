@@ -10,11 +10,12 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 )
 
-func mdToHTML(md []byte) []byte {
+func mdToHTML(md string) []byte {
 	// create markdown parser with extensions
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
+	md_file := []byte(md)
 	p := parser.NewWithExtensions(extensions)
-	doc := p.Parse(md)
+	doc := p.Parse(md_file)
 
 	// create HTML renderer with extensions
 	htmlFlags := html.CommonFlags | html.HrefTargetBlank
@@ -46,7 +47,7 @@ func WriteHTMLFile(args string) {
 	panic(err)
     }
 
-    html := mdToHTML(input)
+    html := mdToHTML(string(input))
 
     header := []byte("{{ define \"content\"}}\n")
 

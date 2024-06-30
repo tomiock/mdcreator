@@ -44,9 +44,26 @@ func main() {
 
 	md_files, err := findMarkdown(*blogDir)
 	if err != nil {
-		log.Fatalf("Error finding templates: %v", err)
+		log.Fatalf("Error finding markdown files: %v", err)
 	}
+
+	views := "views"
+	base_dir := filepath.Dir(*base)
+	subfolderPath := filepath.Join(base_dir, views)
+
+	info, err := os.Stat(subfolderPath)
+	if os.IsNotExist(err) {
+		os.Mkdir(subfolderPath, 0755)
+		// 0755 Commonly used on web servers. The owner can read, write, execute.
+		// Everyone else can read and execute but not modify the file.
+	} else if err != nil {
+		log.Panic("An error occurred: %v\n", err)
+	} else if !info.IsDir() {
+		log.Fatal("%s exists but is not a directory\n", views)
+	} else {
+	}
+
 	for _, tmpl := range md_files {
-		fmt.Println(tmpl)
+		WriteHTMLFile(tmpl)
 	}
 }
