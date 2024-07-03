@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -25,7 +25,6 @@ func mdToHTML(md string) []byte {
 	return markdown.Render(doc, renderer)
 }
 
-
 func TransformFileName(fileName string) string {
 	list_string := strings.Fields(strings.ToLower(fileName))
 	return strings.Join(list_string, "_")
@@ -33,39 +32,63 @@ func TransformFileName(fileName string) string {
 
 func WriteHTMLFile(args string) {
 
-    input, err := os.ReadFile(args)
-    if err != nil {
-	fmt.Println("Error reading file:", err)
-	panic(err)
-    }
+	input, err := os.ReadFile(args)
+	if err != nil {
+		log.Panicf("Error reading file: %v", err)
+	}
 
-    file_name := TransformFileName(args[:len(args)-3])
+	file_name := TransformFileName(args[:len(args)-3])
 
-    file, err := os.Create(file_name + ".html")
-    if err != nil {
-	fmt.Println("Error creating file:", err)
-	panic(err)
-    }
+	file, err := os.Create(file_name + ".html")
+	if err != nil {
+		log.Panicf("Error creating file: %v", err)
+	}
 
-    html := mdToHTML(string(input))
+	html := mdToHTML(string(input))
 
-    header := []byte("{{ define \"content\"}}\n")
+	header := []byte("{{ define \"content\"}}\n")
 
-    _, err = file.Write(header)
-    if err != nil {
-	fmt.Println("Error writing to file:", err)
-	panic(err)
-    }
+	_, err = file.Write(header)
+	if err != nil {
+		log.Panicf("Error writing to file: %v", err)
+	}
 
-    _, err = file.Write(html)
-    if err != nil {
-	fmt.Println("Error writing to file:", err)
-	panic(err)
-    }
+	_, err = file.Write(html)
+	if err != nil {
+		log.Panicf("Error writing to file: %v", err)
+	}
 
-    _, err = file.Write([]byte("{{ end }}"))
-    if err != nil {
-	fmt.Println("Error writing to file:", err)
-	panic(err)
-    }
+	_, err = file.Write([]byte("{{ end }}"))
+	if err != nil {
+		log.Panicf("Error writing to file: %v", err)
+	}
+}
+
+func WriteTmplFile(args string, file_path string) {
+	input, err := os.ReadFile(args)
+	if err != nil {
+		log.Panicf("Error reading file: %v", err)
+	}
+
+	// if the file already exists, it overwrites it
+	file, err := os.Create(file_path)
+	if err != nil {
+		log.Panicf("Error creating file: %v", err)
+	}
+
+	_, err = file.Write([]byte("{{ define \"content\"}}\n"))
+	if err != nil {
+		log.Panicf("Error writing to file: %v", err)
+	}
+
+	html := mdToHTML(string(input))
+	_, err = file.Write(html)
+	if err != nil {
+		log.Panicf("Error writing to file: %v", err)
+	}
+
+	_, err = file.Write([]byte("{{ template \"content\" . }}"))
+	if err != nil {
+		log.Panicf("Error writing to file: %v", err)
+	}
 }
