@@ -3,13 +3,15 @@ package main
 // always main package for executable program
 
 import (
+	"bufio"
+	"errors"
 	"flag"
+	"sort"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 )
 
 func findMarkdown(dir string) ([]string, error) {
@@ -30,23 +32,32 @@ func findMarkdown(dir string) ([]string, error) {
 	return templates, err
 }
 
-func ToSnakeCase(input string) string {
-    re := regexp.MustCompile(`[^\w]+`)
-    snake := re.ReplaceAllString(strings.ToLower(input), "_")
-    return strings.Trim(snake, "_")
+func generateGetRouteCode(postTitle, route_name, file_path string) string {
+	return fmt.Sprintf(`e.GET("/%s", func(c echo.Context) error {
+	t, err := template.ParseFiles("../views/base.tmpl", "../%s")
+	if err != nil {
+		panic(err)
+	}
+
+	res := map[string]interface{}{
+		"Title": "%s",
+	}
+	return t.Execute(c.Response().Writer, res)
+})`, route_name, file_path, postTitle)
 }
 
 func main() {
 	// Define flags
 	base := flag.String("base", "", "the base template file")
 	blogDir := flag.String("blog-dir", "", "the directory containing blog templates")
+	mainFile := flag.String("main", "", "the main file to write the routes to")
 
 	// Parse the flags
 	flag.Parse()
 
 	// Use the flag values
-	if *base == "" || *blogDir == "" {
-		fmt.Println("Usage: app --base base --blog-dir dir/")
+	if *base == "" || *blogDir == "" || *mainFile == "" {
+		fmt.Println("Usage: app --base base --blog-dir dir/ --main main.go")
 		return
 	}
 
