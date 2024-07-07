@@ -25,7 +25,7 @@ func mdToHTML(md string) []byte {
 	return markdown.Render(doc, renderer)
 }
 
-func TransformFileName(fileName string) string {
+func FileName_to_snake_case(fileName string) string {
 	list_string := strings.Fields(strings.ToLower(fileName))
 	return strings.Join(list_string, "_")
 }
@@ -37,7 +37,7 @@ func WriteHTMLFile(args string) {
 		log.Panicf("Error reading file: %v", err)
 	}
 
-	file_name := TransformFileName(args[:len(args)-3])
+	file_name := FileName_to_snake_case(args[:len(args)-3])
 
 	file, err := os.Create(file_name + ".html")
 	if err != nil {

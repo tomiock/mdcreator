@@ -4,9 +4,7 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"flag"
-	"sort"
 	"fmt"
 	"log"
 	"os"
@@ -46,6 +44,73 @@ func generateGetRouteCode(postTitle, route_name, file_path string) string {
 })`, route_name, file_path, postTitle)
 }
 
+func updateMainFile(file_path string, route string) error {
+	regex, err := regexp.Compile(`^\w+\.Logger\.Fatal\(\w+\.Start\(":\d+"\)\)`)
+	if err != nil {
+		return err
+	}
+
+	var last_lines []string
+	var lines []string
+	matched := false
+
+	file, err := os.Open(file_path)
+	if err != nil {
+		log.Fatalf("Error opening main file: %v", err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if regex.MatchString(line) {
+			matched = true
+		}
+		if matched {
+			// store the line in a buffer
+			last_lines = append(last_lines, line)
+		} else {
+			lines = append(lines, line)
+		}
+
+	}
+	if err := scanner.Err(); err != nil {
+		return err
+	}
+
+	file, err = os.OpenFile(file_path, os.O_WRONLY|os.O_TRUNC, 0664)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	writer := bufio.NewWriter(file)
+	for _, line := range lines {
+		_, err := writer.WriteString(line + "\n")
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = writer.WriteString(route + "\n\n")
+	if err != nil {
+		return err
+	}
+
+	for _, line := range last_lines {
+		_, err := writer.WriteString(line + "\n")
+		if err != nil {
+			return err
+		}	
+	}
+
+	if err := writer.Flush(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func main() {
 	// Define flags
 	base := flag.String("base", "", "the base template file")
@@ -79,16 +144,22 @@ func main() {
 		log.Panicf("An error occurred: %v\n", err)
 	} else if !info.IsDir() {
 		log.Fatalf("%s exists but is not a directory\n", views)
-	} else { 
+	} else {
 	}
 
 	for _, tmpl := range md_files {
-		title_post := TransformFileName(tmpl[len(*blogDir)+1:len(tmpl)-3])
-		_title_post := ToSnakeCase(title_post)
-		post_path := filepath.Join(subfolderPath, title_post + ".tmpl")
+		title_post := tmpl[len(*blogDir)+1 : len(tmpl)-3]
+		_title_post := FileName_to_snake_case(title_post)
+		post_path := filepath.Join(subfolderPath, _title_post+".tmpl")
+
 		WriteTmplFile(tmpl, post_path)
-		fmt.Println(post_path)
-		fmt.Println(_title_post)
-		fmt.Println(title_post)
+
+		route_str := generateGetRouteCode(title_post, _title_post, post_path)
+
+		err = updateMainFile(*mainFile, route_str)
+		if err != nil {
+			log.Fatalf("Error updating main file: %v", err)
+		}
 	}
 }
+
