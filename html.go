@@ -87,7 +87,7 @@ func WriteTmplFile(args string, file_path string) {
 		log.Panicf("Error writing to file: %v", err)
 	}
 
-	_, err = file.Write([]byte("{{ template \"content\" . }}"))
+	_, err = file.Write([]byte("{{ end }}"))
 	if err != nil {
 		log.Panicf("Error writing to file: %v", err)
 	}

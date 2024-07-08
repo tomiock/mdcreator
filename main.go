@@ -30,9 +30,9 @@ func findMarkdown(dir string) ([]string, error) {
 	return templates, err
 }
 
-func generateGetRouteCode(postTitle, route_name, file_path string) string {
+func generateGetRouteCode(post_title, route_name, base_path, file_path string) string {
 	return fmt.Sprintf(`e.GET("/%s", func(c echo.Context) error {
-	t, err := template.ParseFiles("../views/base.tmpl", "../%s")
+	t, err := template.ParseFiles("../%s", "../%s")
 	if err != nil {
 		panic(err)
 	}
@@ -41,7 +41,7 @@ func generateGetRouteCode(postTitle, route_name, file_path string) string {
 		"Title": "%s",
 	}
 	return t.Execute(c.Response().Writer, res)
-})`, route_name, file_path, postTitle)
+})`, route_name, base_path, file_path, post_title)
 }
 
 func updateMainFile(file_path string, route string) error {
@@ -154,7 +154,7 @@ func main() {
 
 		WriteTmplFile(tmpl, post_path)
 
-		route_str := generateGetRouteCode(title_post, _title_post, post_path)
+		route_str := generateGetRouteCode(title_post, _title_post, *base, post_path)
 
 		err = updateMainFile(*mainFile, route_str)
 		if err != nil {
